@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { insertLogin } from '../actions';
+import { insertLogin, getTokenAction } from '../actions';
+import fetchToken from '../services/fetchToken';
 
 class Home extends React.Component {
   constructor(props) {
@@ -10,8 +11,17 @@ class Home extends React.Component {
       user: '',
       email: '',
       isButtonDisabled: true,
+      token: '',
     };
     this.handleChange = this.handleChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  async onSubmit() {
+    const { history, dispatchLogin, dispatchToken } = this.props;
+    dispatchToken();
+    dispatchLogin(this.state);
+    history.push('/game');
   }
 
   handleChange({ target }) {
@@ -29,7 +39,6 @@ class Home extends React.Component {
 
   render() {
     const { state: { user, email, isButtonDisabled } } = this;
-    const { dispatchLogin } = this.props;
     return (
       <form>
         <fieldset>
@@ -61,7 +70,7 @@ class Home extends React.Component {
             type="button"
             data-testid="btn-play"
             disabled={ isButtonDisabled }
-            onClick={ () => dispatchLogin(this.state) }
+            onClick={ () => this.onSubmit() }
           >
             Play
           </button>
@@ -72,10 +81,12 @@ class Home extends React.Component {
 }
 const mapDispatchToProps = (dispatch) => ({
   dispatchLogin: (payload) => { dispatch(insertLogin(payload)); },
+  dispatchToken: (request) => { dispatch(getTokenAction(request)); },
 });
 
 Home.propTypes = {
   dispatchLogin: PropTypes.func.isRequired,
+  history: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default connect(null, mapDispatchToProps)(Home);
