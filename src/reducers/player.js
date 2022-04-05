@@ -9,8 +9,8 @@ const INITIAL_STATE = {
 
 const player = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-  case INSERT_LOGIN:
-    return { name: action.payload.name, gravatarEmail: action.payload.email };
+  case INSERT_LOGIN: // !!! utilizamos o user no lugar do name na implementação da handleChange
+    return { name: action.payload.user, gravatarEmail: action.payload.email };
   default:
     return state;
   }
