@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { insertLogin, getTokenAction } from '../actions';
-import fetchToken from '../services/fetchToken';
+import { insertLogin, fetchTokenAction } from '../actions';
 
 class Home extends React.Component {
   constructor(props) {
@@ -11,16 +10,19 @@ class Home extends React.Component {
       user: '',
       email: '',
       isButtonDisabled: true,
-      token: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  componentDidMount = () => {
+
+  }
+
   async onSubmit() {
-    const { history, dispatchLogin, dispatchToken } = this.props;
-    dispatchToken();
+    const { history, dispatchLogin, fetchTokenDispatch } = this.props;
     dispatchLogin(this.state);
+    await fetchTokenDispatch();
     history.push('/game');
   }
 
@@ -81,11 +83,13 @@ class Home extends React.Component {
 }
 const mapDispatchToProps = (dispatch) => ({
   dispatchLogin: (payload) => { dispatch(insertLogin(payload)); },
-  dispatchToken: (request) => { dispatch(getTokenAction(request)); },
+  fetchTokenDispatch: () => dispatch(fetchTokenAction()),
+
 });
 
 Home.propTypes = {
   dispatchLogin: PropTypes.func.isRequired,
+  fetchTokenDispatch: PropTypes.func.isRequired,
   history: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
