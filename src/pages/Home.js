@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { FaCog } from 'react-icons/fa';
 import { insertLogin, fetchTokenAction } from '../actions';
 
 class Home extends React.Component {
@@ -13,6 +14,7 @@ class Home extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.toConfig = this.toConfig.bind(this);
   }
 
   async onSubmit() {
@@ -20,6 +22,11 @@ class Home extends React.Component {
     dispatchLogin(this.state);
     await fetchTokenDispatch();
     history.push('/game');
+  }
+
+  toConfig() {
+    const { history } = this.props;
+    history.push('/config');
   }
 
   handleChange({ target }) {
@@ -71,6 +78,13 @@ class Home extends React.Component {
             onClick={ () => this.onSubmit() }
           >
             Play
+          </button>
+          <button
+            type="button"
+            data-testid="btn-settings"
+            onClick={ () => this.toConfig() }
+          >
+            <FaCog />
           </button>
         </fieldset>
       </form>
