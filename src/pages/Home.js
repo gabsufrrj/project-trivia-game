@@ -15,10 +15,6 @@ class Home extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentDidMount = () => {
-
-  }
-
   async onSubmit() {
     const { history, dispatchLogin, fetchTokenDispatch } = this.props;
     dispatchLogin(this.state);
