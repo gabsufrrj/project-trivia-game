@@ -4,6 +4,14 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 
 class Game extends React.Component {
+  // https://flaviocopes.com/how-to-shuffle-array-javascript/ Referência encontrada para randomizar as respostas
+  // shuffleAnswers() {
+  //   const { correctAnswer, incorrectAnswers } = this.props;
+  //   const POINT_FIVE = 0.5;
+  //   const allAnswers = [...incorrectAnswers, correctAnswer];
+  //   return allAnswers.sort(() => Math.random() - POINT_FIVE);
+  // }
+
   render() {
     const { category } = this.props;
     return (
