@@ -5,34 +5,61 @@ import Header from '../components/Header';
 
 class Game extends React.Component {
   // https://flaviocopes.com/how-to-shuffle-array-javascript/ Referência encontrada para randomizar as respostas
-  // shuffleAnswers() {
-  //   const { correctAnswer, incorrectAnswers } = this.props;
-  //   const POINT_FIVE = 0.5;
-  //   const allAnswers = [...incorrectAnswers, correctAnswer];
-  //   return allAnswers.sort(() => Math.random() - POINT_FIVE);
-  // }
+
+  constructor() {
+    super();
+    this.state = {
+      questionIndex: 0,
+      answers: this.shuffleAnswers(),
+    };
+  }
+
+  handleNextQuestion = () => {
+    const { history } = this.props;
+    const indexNumber = 4;
+    const { questionIndex } = this.state;
+    this.setState((prev) => ({
+      questionIndex: prev.questionIndex + 1,
+    }), () => {
+      if (questionIndex >= indexNumber) {
+        history.push('/feedback');
+      }
+    });
+  }
+
+  shuffleAnswers = () => {
+    const { questions } = this.props;
+    const { questionIndex } = this.state;
+    const incorrectAnswers = questions[questionIndex].incorrect_answers;
+    const correctAnswer = questions[questionIndex].correct_answers;
+    const POINT_FIVE = 0.5;
+    const allAnswers = [...incorrectAnswers, correctAnswer];
+    return allAnswers.sort(() => Math.random() - POINT_FIVE);
+  }
 
   render() {
-    const { category } = this.props;
+    const { questionIndex } = this.state;
+    const { questions } = this.props;
     return (
       <div>
         <Header />
-        <h1
-          data-testeid="question-category"
-        >
-          Question
-          {category}
+        <h1 data-testid="question-category">
+          {questions[questionIndex] && questions[questionIndex].category}
         </h1>
         <p
-          data-testeid="question-test"
+          data-testid="question-test"
         >
-          Test
+          {questions[questionIndex].question}
 
         </p>
-        {/* <button></button>
-        <button></button>
-        <button></button>
-        <button></button> */}
+        <button
+          data-testid="btn-next"
+          type="button"
+          onClick={ () => this.handleNextQuestion() }
+        >
+          Next
+
+        </button>
       </div>
     );
   }
@@ -40,11 +67,16 @@ class Game extends React.Component {
 
 const mapStateToProps = (state) => ({
   token: state.token,
-  category: state.game.questions[0].category,
+  questions: state.game.questions,
+  // correctAnswer: state.game.questions.correct_answers,
+  // incorrectAnswers: state.game.questions.incorrect_answers,
 });
 
 Game.propTypes = {
-  category: PropTypes.string.isRequired,
+  questions: PropTypes.string.isRequired,
+  history: PropTypes.objectOf(PropTypes.any).isRequired,
+  correctAnswer: PropTypes.string.isRequired,
+  incorrectAnswers: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default connect(mapStateToProps)(Game);
