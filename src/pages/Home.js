@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FaCog } from 'react-icons/fa';
-import { insertLogin, fetchTokenAction, fetchAnswersAction } from '../actions';
+import { insertLogin, fetchTokenAndQuestionsAction } from '../actions';
 
 class Home extends React.Component {
   constructor(props) {
@@ -21,14 +21,10 @@ class Home extends React.Component {
     const {
       history,
       dispatchLogin,
-      fetchTokenDispatch,
-      dispatchAnswer,
+      fetchTokenQuestionsDispatch,
     } = this.props;
     dispatchLogin(this.state);
-    await fetchTokenDispatch();
-    const { token } = this.props;
-    console.log('aqui', token);
-    await dispatchAnswer(token);
+    await fetchTokenQuestionsDispatch();
     history.push('/game');
   }
 
@@ -100,21 +96,15 @@ class Home extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  token: state.token,
-});
-
 const mapDispatchToProps = (dispatch) => ({
   dispatchLogin: (payload) => { dispatch(insertLogin(payload)); },
-  fetchTokenDispatch: () => dispatch(fetchTokenAction()),
-  dispatchAnswer: (token) => dispatch(fetchAnswersAction(token)),
+  fetchTokenQuestionsDispatch: () => dispatch(fetchTokenAndQuestionsAction()),
 });
 
 Home.propTypes = {
   dispatchLogin: PropTypes.func.isRequired,
-  fetchTokenDispatch: PropTypes.func.isRequired,
+  fetchTokenQuestionsDispatch: PropTypes.func.isRequired,
   history: PropTypes.objectOf(PropTypes.any).isRequired,
-  dispatchAnswer: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(null, mapDispatchToProps)(Home);
