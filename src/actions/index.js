@@ -26,17 +26,17 @@ export const fetchTokenAndQuestionsAction = () => async (dispatch) => {
   dispatch(getQuestions(questionsData));
 };
 
-export const setIndex = (index) => ({
-  type: SET_INDEX, index,
-});
+// export const setIndex = (index) => ({
+//   type: SET_INDEX, index,
+// });
 
-export const setScore = (score) => ({
-  type: SET_SCORE, score,
-});
+// export const setScore = (score) => ({
+//   type: SET_SCORE, score,
+// });
 
-export const handleUserAnswer = (payload) => ({ type: HANDLE_ANSWER, payload });
+// export const handleUserAnswer = (payload) => ({ type: HANDLE_ANSWER, payload });
 
-export const nextQuestion = (payload) => ({ type: NEXT_QUESTION, payload });
+// export const nextQuestion = (payload) => ({ type: NEXT_QUESTION, payload });
 
 // export const fetchAnswersAction = () => async (dispatch) => {
 //   const answerData = await fetchQuestions();
