@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FaCog } from 'react-icons/fa';
-import { insertLogin, fetchTokenAction } from '../actions';
+import { insertLogin, fetchTokenAndQuestionsAction } from '../actions';
 
 class Home extends React.Component {
   constructor(props) {
@@ -18,9 +18,13 @@ class Home extends React.Component {
   }
 
   async onSubmit() {
-    const { history, dispatchLogin, fetchTokenDispatch } = this.props;
+    const {
+      history,
+      dispatchLogin,
+      fetchTokenQuestionsDispatch,
+    } = this.props;
     dispatchLogin(this.state);
-    await fetchTokenDispatch();
+    await fetchTokenQuestionsDispatch();
     history.push('/game');
   }
 
@@ -91,15 +95,15 @@ class Home extends React.Component {
     );
   }
 }
+
 const mapDispatchToProps = (dispatch) => ({
   dispatchLogin: (payload) => { dispatch(insertLogin(payload)); },
-  fetchTokenDispatch: () => dispatch(fetchTokenAction()),
-
+  fetchTokenQuestionsDispatch: () => dispatch(fetchTokenAndQuestionsAction()),
 });
 
 Home.propTypes = {
   dispatchLogin: PropTypes.func.isRequired,
-  fetchTokenDispatch: PropTypes.func.isRequired,
+  fetchTokenQuestionsDispatch: PropTypes.func.isRequired,
   history: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
