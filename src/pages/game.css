@@ -1,9 +1,13 @@
 .red {
   border: 3px solid;
-  border-color: rgb(255, 0, 0);
+  border-color: red;
 }
 
 .green {
-border: 3px solid ;
-border-color: rgb(6, 240, 15);
+  border: 3px solid;
+  border-color: rgb(6, 240, 15);
+}
+
+.btn-next {
+  visibility: hidden;
 }

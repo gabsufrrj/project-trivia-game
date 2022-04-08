@@ -14,6 +14,9 @@ class Game extends React.Component {
       answers: [],
       green: 'border: 3px solid rgb(6, 240, 15)',
       red: 'border: 3px solid rgb(255, 0, 0)',
+      //
+      visibility: 'visibility: visible',
+      //
     };
   }
 
@@ -44,21 +47,25 @@ class Game extends React.Component {
   removeStyle = () => {
     const wrongAnswer = [...document.querySelectorAll('#wrong-ans')];
     const correctAnswer = document.querySelector('#correct-ans');
+    const btnVisibility = document.querySelector('.btn-next');
     console.log(correctAnswer);
     wrongAnswer.forEach((ele) => {
       ele.removeAttribute('style');
     });
     correctAnswer.removeAttribute('style');
+    btnVisibility.removeAttribute('style');
   }
 
   addStyle = () => {
-    const { red, green } = this.state;
+    const { red, green, visibility } = this.state;
     const wrongAnswer = [...document.querySelectorAll('#wrong-ans')];
     const correctAnswer = document.querySelector('#correct-ans');
+    const btnVisibility = document.querySelector('.btn-next');
     wrongAnswer.forEach((ele) => {
       ele.setAttribute('style', red);
     });
     correctAnswer.setAttribute('style', green);
+    btnVisibility.setAttribute('style', visibility);
   }
 
   handleClick = () => {
@@ -115,6 +122,7 @@ class Game extends React.Component {
           ))}
         </div>
         <button
+          className="btn-next"
           data-testid="btn-next"
           type="button"
           onClick={ () => this.handleNextQuestion() }
