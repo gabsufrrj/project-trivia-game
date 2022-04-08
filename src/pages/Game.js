@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
+import './game.css';
 
 class Game extends React.Component {
   // https://flaviocopes.com/how-to-shuffle-array-javascript/ Referência encontrada para randomizar as respostas
@@ -11,6 +12,8 @@ class Game extends React.Component {
     this.state = {
       questionIndex: 0,
       answers: [],
+      green: 'border: 3px solid rgb(6, 240, 15)',
+      red: 'border: 3px solid rgb(255, 0, 0)',
     };
   }
 
@@ -20,7 +23,7 @@ class Game extends React.Component {
   }
 
   // componentDidUpdate() {
-  //   this.shuffleAnswers();
+  //   this.handleClick();
   // }
 
   handleNextQuestion = () => {
@@ -35,12 +38,36 @@ class Game extends React.Component {
       }
       this.shuffleAnswers();
     });
+    this.removeStyle();
   }
+
+  removeStyle = () => {
+    const wrongAnswer = [...document.querySelectorAll('#wrong-ans')];
+    const correctAnswer = document.querySelector('#correct-ans');
+    console.log(correctAnswer);
+    wrongAnswer.forEach((ele) => {
+      ele.removeAttribute('style');
+    });
+    correctAnswer.removeAttribute('style');
+  }
+
+  addStyle = () => {
+    const { red, green } = this.state;
+    const wrongAnswer = [...document.querySelectorAll('#wrong-ans')];
+    const correctAnswer = document.querySelector('#correct-ans');
+    wrongAnswer.forEach((ele) => {
+      ele.setAttribute('style', red);
+    });
+    correctAnswer.setAttribute('style', green);
+  }
+
+  handleClick = () => {
+    this.addStyle();
+  };
 
   shuffleAnswers = () => {
     const { questions } = this.props;
     const { questionIndex } = this.state;
-    console.log(questionIndex);
     const incorrectAnswers = questions[questionIndex].incorrect_answers;
     const correctAnswer = questions[questionIndex].correct_answer;
     const POINT_FIVE = 0.5;
@@ -54,8 +81,6 @@ class Game extends React.Component {
   render() {
     const { questionIndex, answers } = this.state;
     const { questions } = this.props;
-    console.log(questionIndex);
-    // console.log(answers);
     return (
       <div>
         <Header />
@@ -72,11 +97,16 @@ class Game extends React.Component {
           {answers.map((ans, index) => (
             <>
               <button
-                key={ index }
+                key={ ans }
                 type="button"
                 data-testid={ ans === questions[questionIndex].correct_answer
                   ? 'correct-answer'
                   : `wrong-answer-${index}` }
+                id={ ans === questions[questionIndex].correct_answer
+                  ? 'correct-ans'
+                  : 'wrong-ans' }
+                onClick={ () => this.handleClick() }
+
               >
                 { ans }
               </button>
@@ -105,7 +135,7 @@ const mapStateToProps = (state) => ({
 });
 
 Game.propTypes = {
-  questions: PropTypes.string.isRequired,
+  questions: PropTypes.arrayOf(PropTypes.any).isRequired,
   history: PropTypes.objectOf(PropTypes.any).isRequired,
   // correctAnswer: PropTypes.string.isRequired,
   // incorrectAnswers: PropTypes.arrayOf(PropTypes.string).isRequired,
