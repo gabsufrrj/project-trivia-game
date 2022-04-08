@@ -8,6 +8,10 @@
   border-color: rgb(6, 240, 15);
 }
 
-.btn-next {
+.btn-next-visible {
+  visibility: visible;
+}
+
+.btn-next-hidden {
   visibility: hidden;
 }

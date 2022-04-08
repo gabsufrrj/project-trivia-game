@@ -12,11 +12,9 @@ class Game extends React.Component {
     this.state = {
       questionIndex: 0,
       answers: [],
-      green: 'border: 3px solid rgb(6, 240, 15)',
-      red: 'border: 3px solid rgb(255, 0, 0)',
-      //
-      visibility: 'visibility: visible',
-      //
+      classActive: undefined,
+      visibility: 'btn-next-hidden',
+
     };
   }
 
@@ -41,35 +39,11 @@ class Game extends React.Component {
       }
       this.shuffleAnswers();
     });
-    this.removeStyle();
-  }
-
-  removeStyle = () => {
-    const wrongAnswer = [...document.querySelectorAll('#wrong-ans')];
-    const correctAnswer = document.querySelector('#correct-ans');
-    const btnVisibility = document.querySelector('.btn-next');
-    console.log(correctAnswer);
-    wrongAnswer.forEach((ele) => {
-      ele.removeAttribute('style');
-    });
-    correctAnswer.removeAttribute('style');
-    btnVisibility.removeAttribute('style');
-  }
-
-  addStyle = () => {
-    const { red, green, visibility } = this.state;
-    const wrongAnswer = [...document.querySelectorAll('#wrong-ans')];
-    const correctAnswer = document.querySelector('#correct-ans');
-    const btnVisibility = document.querySelector('.btn-next');
-    wrongAnswer.forEach((ele) => {
-      ele.setAttribute('style', red);
-    });
-    correctAnswer.setAttribute('style', green);
-    btnVisibility.setAttribute('style', visibility);
+    this.setState({ classActive: undefined, visibility: 'btn-next-hidden' });
   }
 
   handleClick = () => {
-    this.addStyle();
+    this.setState({ classActive: true, visibility: 'btn-next-visible' });
   };
 
   shuffleAnswers = () => {
@@ -86,7 +60,7 @@ class Game extends React.Component {
   }
 
   render() {
-    const { questionIndex, answers } = this.state;
+    const { questionIndex, answers, classActive, visibility } = this.state;
     const { questions } = this.props;
     return (
       <div>
@@ -104,16 +78,17 @@ class Game extends React.Component {
           {answers.map((ans, index) => (
             <>
               <button
-                key={ ans }
+                key={ ans[index] }
                 type="button"
                 data-testid={ ans === questions[questionIndex].correct_answer
                   ? 'correct-answer'
                   : `wrong-answer-${index}` }
-                id={ ans === questions[questionIndex].correct_answer
-                  ? 'correct-ans'
-                  : 'wrong-ans' }
-                onClick={ () => this.handleClick() }
-
+                onClick={ (e) => this.handleClick(e) }
+                className={ classActive
+                  && (
+                    ans === questions[questionIndex].correct_answer
+                      ? 'green'
+                      : 'red') }
               >
                 { ans }
               </button>
@@ -122,7 +97,7 @@ class Game extends React.Component {
           ))}
         </div>
         <button
-          className="btn-next"
+          className={ visibility }
           data-testid="btn-next"
           type="button"
           onClick={ () => this.handleNextQuestion() }
