@@ -11,17 +11,18 @@ class Game extends React.Component {
   constructor() {
     super();
     this.state = {
+      questionsArr: [],
       questionIndex: 0,
       answers: [],
       classActive: undefined,
       visibility: 'btn-next-hidden',
       time: 30,
-
+      correctAns: '',
     };
   }
 
   componentDidMount() {
-    this.shuffleAnswers();
+    this.shuffleAnswers(0);
     this.updateTime();
   }
 
@@ -31,22 +32,22 @@ class Game extends React.Component {
 
   handleNextQuestion = () => {
     const { history } = this.props;
-    const indexNumber = 4;
-    const { questionIndex } = this.state;
+    // const indexNumber = 4;
+    const { questionsArr, questionIndex } = this.state;
     this.setState((prev) => ({
       questionIndex: prev.questionIndex + 1,
     }), () => {
-      if (questionIndex >= indexNumber) {
-        history.push('/feedback');
-        // Parte add
-      } else {
+      if (questionIndex < questionsArr.length) {
         this.setState((prevState) => ({
           ...prevState,
           time: 30,
         }));
       }
+      if (questionIndex === questionsArr.length - 1) {
+        history.push({ pathname: ('/feedback') });
+      }
       this.updateTime();
-      this.shuffleAnswers();
+      this.shuffleAnswers(questionIndex);
     });
     this.setState({ classActive: undefined, visibility: 'btn-next-hidden' });
   }
@@ -56,16 +57,22 @@ class Game extends React.Component {
     clearInterval(this.timer);
   };
 
-  shuffleAnswers = () => {
+  shuffleAnswers = (i) => {
     const { questions } = this.props;
-    const { questionIndex } = this.state;
-    const incorrectAnswers = questions[questionIndex].incorrect_answers;
-    const correctAnswer = questions[questionIndex].correct_answer;
+    // const { questionIndex } = this.state;
+
+    const { incorrect_answers: incorrectAnswers,
+      correct_answer: correctAnswer } = questions[i];
+
+    // const incorrectAnswers = questions[questionIndex].incorrect_answers;
+    // const correctAnswer = questions[questionIndex].correct_answer;
     const POINT_FIVE = 0.5;
     const allAnswers = [...incorrectAnswers, correctAnswer];
     const allAnswersSorted = allAnswers.sort(() => Math.random() - POINT_FIVE);
     this.setState(() => ({
+      questionsArr: questions,
       answers: allAnswersSorted,
+      correctAns: correctAnswer,
     }));
   }
 
@@ -85,7 +92,8 @@ class Game extends React.Component {
   };
 
   render() {
-    const { questionIndex, answers, classActive, visibility, time } = this.state;
+    const { questionIndex, answers,
+      classActive, visibility, time, correctAns } = this.state;
     const { questions } = this.props;
     return (
       <div>
@@ -104,16 +112,16 @@ class Game extends React.Component {
           {answers.map((ans, index) => (
             <>
               <button
-                key={ ans[index] }
+                key={ ans[index] * Math.random() }
                 type="button"
-                data-testid={ ans === questions[questionIndex].correct_answer
+                data-testid={ ans === correctAns
                   ? 'correct-answer'
                   : `wrong-answer-${index}` }
                 onClick={ (e) => this.handleClick(e) }
                 disabled={ (time === 0) }
                 className={ classActive
                   && (
-                    ans === questions[questionIndex].correct_answer
+                    ans === correctAns
                       ? 'green'
                       : 'red') }
               >
