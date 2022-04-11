@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import './game.css';
+import { setScore } from '../actions';
 
 class Game extends React.Component {
   // https://flaviocopes.com/how-to-shuffle-array-javascript/
@@ -18,6 +19,7 @@ class Game extends React.Component {
       visibility: 'btn-next-hidden',
       time: 30,
       correctAns: '',
+      score: 0,
     };
   }
 
@@ -32,8 +34,10 @@ class Game extends React.Component {
 
   handleNextQuestion = () => {
     const { history } = this.props;
-    // const indexNumber = 4;
     const { questionsArr, questionIndex } = this.state;
+    if (questionIndex === questionsArr.length - 1) {
+      history.push({ pathname: ('/feedback') });
+    }
     this.setState((prev) => ({
       questionIndex: prev.questionIndex + 1,
     }), () => {
@@ -43,19 +47,30 @@ class Game extends React.Component {
           time: 30,
         }));
       }
-      if (questionIndex === questionsArr.length - 1) {
-        history.push({ pathname: ('/feedback') });
-      }
       this.updateTime();
       this.shuffleAnswers(questionIndex);
     });
     this.setState({ classActive: undefined, visibility: 'btn-next-hidden' });
   }
 
-  handleClick = () => {
+  handleClick = ({ target }) => {
+    const { correctAns } = this.state;
+    console.log(target.innerText);
+    if (target.innerText === correctAns) {
+      this.setState((prevState) => ({
+        score: prevState.score + this.calculateScore(),
+      }), () => this.handleAnswers());
+    }
+    this.handleAnswers();
+  };
+
+  handleAnswers = () => {
+    const { dispatchScore } = this.props;
     this.setState({ classActive: true, visibility: 'btn-next-visible' });
     clearInterval(this.timer);
-  };
+    const { score } = this.state;
+    dispatchScore(score);
+  }
 
   shuffleAnswers = (i) => {
     const { questions } = this.props;
@@ -86,15 +101,42 @@ class Game extends React.Component {
       }
       if (time === TIME_LIMIT) {
         clearInterval(this.timer);
-        this.handleClick();
+        this.handleAnswers();
       }
     }, ONE_SECOND);
   };
 
+  calculateScore = () => {
+    const { time, questionIndex } = this.state;
+    const { questions } = this.props;
+    console.log(questionIndex);
+    const { difficulty } = questions[questionIndex];
+    const TEN = 10;
+    // console.log(questions);
+    // console.log(time);
+    // console.log(difficulty);
+    if (difficulty === 'hard') {
+      const difficultyValue = 3;
+      const scoreSum = TEN + Number(time * difficultyValue);
+      return scoreSum;
+    } if (difficulty === 'medium') {
+      const difficultyValue = 2;
+      const scoreSum = TEN + Number(time * difficultyValue);
+      return scoreSum;
+    } if (difficulty === 'easy') {
+      const difficultyValue = 1;
+      const scoreSum = TEN + Number(time * difficultyValue);
+      return scoreSum;
+    }
+  }
+
   render() {
     const { questionIndex, answers,
-      classActive, visibility, time, correctAns } = this.state;
+      classActive, visibility, time, correctAns, score } = this.state;
     const { questions } = this.props;
+    console.log(this.calculateScore());
+    console.log('score', score);
+    console.log('correct', correctAns);
     return (
       <div>
         <Header />
@@ -150,9 +192,14 @@ const mapStateToProps = (state) => ({
   questions: state.game.questions,
 });
 
+const mapDispatchToProps = (dispatch) => ({
+  dispatchScore: (payload) => { dispatch(setScore(payload)); },
+});
+
 Game.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.any).isRequired,
   history: PropTypes.objectOf(PropTypes.any).isRequired,
+  dispatchScore: PropTypes.func.isRequired,
 };
 
-export default connect(mapStateToProps)(Game);
+export default connect(mapStateToProps, mapDispatchToProps)(Game);

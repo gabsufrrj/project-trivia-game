@@ -1,4 +1,4 @@
-import { GET_QUESTIONS, SET_INDEX, SET_SCORE } from '../actions';
+import { GET_QUESTIONS, SET_INDEX } from '../actions';
 
 const INITIAL_STATE = {
   questions: [],
@@ -24,13 +24,6 @@ const game = (state = INITIAL_STATE, action) => {
       ...state,
       index: action.index,
     };
-
-  case SET_SCORE:
-    return {
-      ...state,
-      score: action.score,
-    };
-
   default:
     return state;
   }
