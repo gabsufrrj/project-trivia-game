@@ -20,6 +20,7 @@ class Game extends React.Component {
       time: 30,
       correctAns: '',
       score: 0,
+      assertions: 0,
     };
   }
 
@@ -59,6 +60,7 @@ class Game extends React.Component {
     if (target.innerText === correctAns) {
       this.setState((prevState) => ({
         score: prevState.score + this.calculateScore(),
+        assertions: prevState.assertions + 1,
       }), () => this.handleAnswers());
     }
     this.handleAnswers();
@@ -68,8 +70,8 @@ class Game extends React.Component {
     const { dispatchScore } = this.props;
     this.setState({ classActive: true, visibility: 'btn-next-visible' });
     clearInterval(this.timer);
-    const { score } = this.state;
-    dispatchScore(score);
+    const { score, assertions } = this.state;
+    dispatchScore(score, assertions);
   }
 
   shuffleAnswers = (i) => {
@@ -193,7 +195,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatchScore: (payload) => { dispatch(setScore(payload)); },
+  dispatchScore: (score, assertions) => { dispatch(setScore(score, assertions)); },
 });
 
 Game.propTypes = {
