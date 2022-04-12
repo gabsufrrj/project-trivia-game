@@ -30,8 +30,8 @@ export const fetchTokenAndQuestionsAction = () => async (dispatch) => {
 //   type: SET_INDEX, index,
 // });
 
-export const setScore = (score) => ({
-  type: SET_SCORE, score,
+export const setScore = (score, assertions) => ({
+  type: SET_SCORE, score, assertions,
 });
 
 // export const handleUserAnswer = (payload) => ({ type: HANDLE_ANSWER, payload });
